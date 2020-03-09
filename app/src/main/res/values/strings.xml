@@ -4,4 +4,6 @@
     <string name="submit">Submit</string>
     <string name="tryTo">Try\nto Press Me\nGuest!</string>
     <string name="clicks">Clicks: 0</string>
+    <string name="start">START</string>
+    <string name="time">TIME : 15</string>
 </resources>
