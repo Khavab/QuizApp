@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Timer;
 
 public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
@@ -25,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
     int xPos, yPos;
     int clicks = 0;
     final Handler t = new Handler();
+    CountDownTimer timer;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,49 +106,60 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    int time = 15;
+    long time = 15000;
     boolean started = false;
 
     public void startStop(View view) {
         starter = findViewById(R.id.starter);
+        clickCounter = findViewById(R.id.clickCounter);
         clock = findViewById((R.id.clock));
         if (started) {
             context = getApplicationContext();
             toast = Toast.makeText(context, "Score of " + clicks + " submitted!", Toast.LENGTH_SHORT);
             toast.show();
+
             clicks = 0;
-            clickCounter = findViewById(R.id.clickCounter);
+            time = 15000;
+
             clickCounter.setText("Clicks: " + clicks);
             starter.setText("START");
-            time = 15;
+            clock.setText("Time: " + time);
+            started = false;
+
+            stopTimer();
         }
         else{
-            starter.setText("STOP");
-            t.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(time != 0 && started) {
-                        time = time - 1;
-                        clock.setText("TIME: " + time);
-                        t.postDelayed(this, 1000);
-                    }
-                    else{
-                        context = getApplicationContext();
-                        toast = Toast.makeText(context, "Score of " + clicks + " submitted!", Toast.LENGTH_SHORT);
-                        toast.show();
-                        clicks = 0;
-                        time = 15;
-                        clickCounter = findViewById(R.id.clickCounter);
-                        clickCounter.setText("Clicks: " + clicks);
-                        starter.setText("START");
-                    }
-
-                }
-            }, 1000);
+            started = true;
+            startTimer();
         }
 
-
-        started = !started;
-
     }
+
+    public void startTimer(){
+        timer = new CountDownTimer(time, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                time = millisUntilFinished;
+                updateTimer();
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+        }.start();
+    }
+
+    public void stopTimer(){
+        timer.cancel();
+    }
+
+    public void updateTimer(){
+        clock = findViewById(R.id.clock);
+        clock.setText("" + (time / 1000));
+    }
+
+    //make timer
+        //t.start() //make a new
+        //t.stop()
 }
